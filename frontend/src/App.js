@@ -1188,8 +1188,6 @@ function App() {
   const [userWhatsapp, setUserWhatsapp] = useState("");
   const [discountCode, setDiscountCode] = useState("");
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
-  const [isExistingUser, setIsExistingUser] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState("");
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showConfirmPayment, setShowConfirmPayment] = useState(false);
