@@ -917,6 +917,22 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
                     <input type="url" value={course.mapsUrl || ''} onChange={(e) => { const n = [...courses]; n[idx].mapsUrl = e.target.value; setCourses(n); }}
                       onBlur={() => updateCourse(course)} className="w-full px-3 py-2 rounded-lg neon-input text-sm" placeholder="https://maps.google.com/..." />
                   </div>
+                  {/* Toggle visibilité du cours */}
+                  <div className="flex items-center gap-3 mt-2">
+                    <label className="text-white text-xs opacity-70">{t('visible')}</label>
+                    <div className={`switch ${course.visible !== false ? 'active' : ''}`} 
+                      onClick={() => { 
+                        const n = [...courses]; 
+                        n[idx].visible = course.visible === false ? true : false; 
+                        setCourses(n); 
+                        updateCourse({ ...course, visible: n[idx].visible }); 
+                      }} 
+                      data-testid={`course-visible-${course.id}`}
+                    />
+                    <span className="text-white text-xs opacity-50">
+                      {course.visible !== false ? '👁️ Visible' : '🚫 Masqué'}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
