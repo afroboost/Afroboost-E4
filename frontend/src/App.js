@@ -1290,20 +1290,20 @@ function App() {
 
   useEffect(() => { const timer = setTimeout(() => setShowSplash(false), 1500); return () => clearTimeout(timer); }, []);
 
-  // Validate discount code in real-time with proper error messages
+  // LOGIQUE CODE PROMO: Validation en temps réel avec messages clairs
   useEffect(() => {
     const validateCode = async () => {
       // Reset if no code entered
       if (!discountCode || discountCode.trim() === '') { 
         setAppliedDiscount(null); 
-        setValidationMessage(""); 
+        setPromoMessage({ type: '', text: '' });
         return; 
       }
       
       // Need to select a course first
       if (!selectedCourse) { 
         setAppliedDiscount(null);
-        setValidationMessage("⚠️ Veuillez d'abord sélectionner un cours");
+        setPromoMessage({ type: 'warning', text: '⚠️ Sélectionnez d\'abord un cours' });
         return; 
       }
       
@@ -1315,22 +1315,35 @@ function App() {
         });
         
         if (res.data.valid) { 
-          setAppliedDiscount(res.data.code); 
-          setValidationMessage(""); // Clear error on success
+          const code = res.data.code;
+          setAppliedDiscount(code);
+          
+          // Calculate and display the discount amount
+          let discountText = '';
+          if (code.type === '100%') {
+            discountText = 'Réduction de 100% appliquée (GRATUIT)';
+          } else if (code.type === '%') {
+            const discountAmount = selectedOffer ? (selectedOffer.price * parseFloat(code.value) / 100).toFixed(2) : code.value;
+            discountText = `Réduction de ${code.value}% appliquée (-${discountAmount} CHF)`;
+          } else if (code.type === 'CHF') {
+            discountText = `Réduction de ${code.value} CHF appliquée`;
+          }
+          setPromoMessage({ type: 'success', text: `✅ ${discountText}` });
         } else { 
-          setAppliedDiscount(null); 
+          setAppliedDiscount(null);
           // Display specific error message from backend
-          setValidationMessage(`❌ ${res.data.message || t('invalidPromoCode')}`);
+          const errorMsg = res.data.message || 'Code invalide';
+          setPromoMessage({ type: 'error', text: `❌ ${errorMsg}` });
         }
       } catch (err) { 
         setAppliedDiscount(null); 
-        setValidationMessage(`❌ ${t('invalidPromoCode')}`);
+        setPromoMessage({ type: 'error', text: '❌ Code invalide' });
       }
     };
     
-    const debounce = setTimeout(validateCode, 500);
+    const debounce = setTimeout(validateCode, 400);
     return () => clearTimeout(debounce);
-  }, [discountCode, selectedCourse, userEmail, t]);
+  }, [discountCode, selectedCourse, selectedOffer, userEmail]);
 
   // Secret coach access: 3 rapid clicks
   const handleCopyrightClick = () => {
