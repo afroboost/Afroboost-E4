@@ -1129,7 +1129,9 @@ function App() {
     if (!isExistingUser) {
       try {
         await axios.post(`${API}/users`, { name: userName, email: userEmail, whatsapp: userWhatsapp });
-      } catch {}
+      } catch (e) {
+        console.error("User creation error:", e);
+      }
     }
 
     // Open payment
