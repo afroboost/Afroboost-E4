@@ -91,6 +91,13 @@ html, body {
   background: rgba(217, 28, 210, 0.15);
 }
 
+/* Valid Code Input */
+.valid-code {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.5) !important;
+  background: rgba(34, 197, 94, 0.1) !important;
+}
+
 /* Course Cards */
 .course-card {
   transition: all 0.3s ease;
