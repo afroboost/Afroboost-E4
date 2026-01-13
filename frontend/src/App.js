@@ -443,27 +443,27 @@ const MediaDisplay = ({ url, className }) => {
     pointerEvents: 'auto'
   };
 
-  // Top bar overlay to hide YouTube title/logo - More opaque
+  // Top bar overlay to completely hide YouTube title/logo
   const topBarOverlayStyle = {
     position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
-    height: '70px',
+    height: '80px',
     zIndex: 15,
-    background: 'linear-gradient(180deg, #000000 0%, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.7) 70%, transparent 100%)',
+    background: 'linear-gradient(180deg, #000000 0%, #000000 50%, rgba(0,0,0,0.8) 80%, transparent 100%)',
     pointerEvents: 'auto'
   };
 
-  // Bottom bar overlay to hide YouTube watermark - More opaque
+  // Bottom bar overlay to completely hide YouTube logo watermark
   const bottomBarOverlayStyle = {
     position: 'absolute',
     bottom: 0,
     left: 0,
     width: '100%',
-    height: '60px',
+    height: '70px',
     zIndex: 15,
-    background: 'linear-gradient(0deg, #000000 0%, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.7) 70%, transparent 100%)',
+    background: 'linear-gradient(0deg, #000000 0%, #000000 50%, rgba(0,0,0,0.8) 80%, transparent 100%)',
     pointerEvents: 'auto'
   };
 
