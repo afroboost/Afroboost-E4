@@ -943,10 +943,15 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
   // Launch campaign (generate links)
   const launchCampaign = async (campaignId) => {
     try {
+      addCampaignLog(campaignId, 'Lancement de la campagne...', 'info');
       const res = await axios.post(`${API}/campaigns/${campaignId}/launch`);
       setCampaigns(campaigns.map(c => c.id === campaignId ? res.data : c));
+      addCampaignLog(campaignId, `Campagne lancée avec ${res.data.results?.length || 0} destinataire(s)`, 'success');
       alert("🚀 Campagne lancée ! Cliquez sur les contacts pour ouvrir les liens.");
-    } catch (err) { console.error("Error launching campaign:", err); }
+    } catch (err) { 
+      console.error("Error launching campaign:", err);
+      addCampaignLog(campaignId, `Erreur lancement: ${err.message}`, 'error');
+    }
   };
 
   // Delete campaign
@@ -955,24 +960,84 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
     try {
       await axios.delete(`${API}/campaigns/${campaignId}`);
       setCampaigns(campaigns.filter(c => c.id !== campaignId));
-    } catch (err) { console.error("Error deleting campaign:", err); }
+      addCampaignLog(campaignId, 'Campagne supprimée', 'info');
+    } catch (err) { 
+      console.error("Error deleting campaign:", err);
+      addCampaignLog(campaignId, `Erreur suppression: ${err.message}`, 'error');
+    }
   };
 
-  // Generate WhatsApp link with message and image URL at the end
+  // Format phone number for WhatsApp (ensure country code)
+  const formatPhoneForWhatsApp = (phone) => {
+    if (!phone) return '';
+    // Remove all non-numeric chars except +
+    let cleaned = phone.replace(/[^\d+]/g, '');
+    
+    // If starts with 0, assume Swiss number and add +41
+    if (cleaned.startsWith('0')) {
+      cleaned = '+41' + cleaned.substring(1);
+    }
+    // If doesn't start with +, add it
+    if (!cleaned.startsWith('+')) {
+      // Assume Swiss if no country code
+      if (cleaned.length === 9 || cleaned.length === 10) {
+        cleaned = '+41' + cleaned;
+      } else {
+        cleaned = '+' + cleaned;
+      }
+    }
+    // Remove the + for WhatsApp API (it expects just numbers)
+    return cleaned.replace('+', '');
+  };
+
+  // Generate WhatsApp link with message and image URL at the end for preview
   const generateWhatsAppLink = (phone, message, mediaUrl, contactName) => {
-    const firstName = contactName?.split(' ')[0] || contactName || '';
-    const personalizedMessage = message.replace(/{prénom}/gi, firstName).replace(/{prenom}/gi, firstName);
-    const fullMessage = mediaUrl ? `${personalizedMessage}\n\n👉 ${mediaUrl}` : personalizedMessage;
-    const cleanPhone = phone?.replace(/[^0-9+]/g, '') || '';
-    return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(fullMessage)}`;
+    const firstName = contactName?.split(' ')[0] || contactName || 'ami(e)';
+    const personalizedMessage = message
+      .replace(/{prénom}/gi, firstName)
+      .replace(/{prenom}/gi, firstName)
+      .replace(/{nom}/gi, contactName || '');
+    
+    // Add media URL at the end for WhatsApp preview
+    const fullMessage = mediaUrl 
+      ? `${personalizedMessage}\n\n🔗 ${mediaUrl}` 
+      : personalizedMessage;
+    
+    const formattedPhone = formatPhoneForWhatsApp(phone);
+    
+    if (!formattedPhone) {
+      addCampaignLog('whatsapp', `Numéro invalide pour ${contactName}: "${phone}"`, 'error');
+      return null;
+    }
+    
+    const encodedMessage = encodeURIComponent(fullMessage);
+    return `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedMessage}`;
   };
 
   // Generate mailto link for email
   const generateEmailLink = (email, subject, message, mediaUrl, contactName) => {
-    const firstName = contactName?.split(' ')[0] || contactName || '';
-    const personalizedMessage = message.replace(/{prénom}/gi, firstName).replace(/{prenom}/gi, firstName);
-    const fullMessage = mediaUrl ? `${personalizedMessage}\n\n👉 ${mediaUrl}` : personalizedMessage;
+    const firstName = contactName?.split(' ')[0] || contactName || 'ami(e)';
+    const personalizedMessage = message
+      .replace(/{prénom}/gi, firstName)
+      .replace(/{prenom}/gi, firstName)
+      .replace(/{nom}/gi, contactName || '');
+    
+    const fullMessage = mediaUrl 
+      ? `${personalizedMessage}\n\n🔗 Voir le visuel: ${mediaUrl}` 
+      : personalizedMessage;
+    
+    if (!email) {
+      addCampaignLog('email', `Email invalide pour ${contactName}`, 'error');
+      return null;
+    }
+    
     return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullMessage)}`;
+  };
+
+  // Generate Instagram DM link
+  const generateInstagramLink = (username) => {
+    // Instagram doesn't have a direct DM API, open profile instead
+    return `https://instagram.com/${username || 'afroboost'}`;
   };
 
   // Mark result as sent
