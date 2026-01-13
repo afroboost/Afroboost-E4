@@ -1340,16 +1340,13 @@ function App() {
     e.preventDefault();
     if (!selectedCourse || !selectedDate || !selectedOffer || !hasAcceptedTerms) return;
 
-    const email = isExistingUser ? users.find(u => u.id === selectedUserId)?.email : userEmail;
-    const whatsapp = isExistingUser ? users.find(u => u.id === selectedUserId)?.whatsapp : userWhatsapp;
-
-    if (!email?.trim() || !whatsapp?.trim()) {
+    // Direct validation - private fields only
+    if (!userEmail?.trim() || !userWhatsapp?.trim()) {
       setValidationMessage(t('emailWhatsappRequired'));
       setTimeout(() => setValidationMessage(""), 4000);
       return;
     }
 
-    const user = isExistingUser ? users.find(u => u.id === selectedUserId) : null;
     const [h, m] = selectedCourse.time.split(':');
     const dt = new Date(selectedDate);
     dt.setHours(parseInt(h), parseInt(m), 0, 0);
@@ -1357,24 +1354,65 @@ function App() {
     const totalPrice = parseFloat(calculateTotal());
 
     const reservation = {
-      userId: user?.id || `user-${Date.now()}`,
-      userName: user?.name || userName,
-      userEmail: email, userWhatsapp: whatsapp,
-      courseId: selectedCourse.id, courseName: selectedCourse.name,
-      courseTime: selectedCourse.time, datetime: dt.toISOString(),
-      offerId: selectedOffer.id, offerName: selectedOffer.name,
-      price: selectedOffer.price, quantity: 1, totalPrice,
+      userId: `user-${Date.now()}`,
+      userName: userName,
+      userEmail: userEmail, 
+      userWhatsapp: userWhatsapp,
+      courseId: selectedCourse.id, 
+      courseName: selectedCourse.name,
+      courseTime: selectedCourse.time, 
+      datetime: dt.toISOString(),
+      offerId: selectedOffer.id, 
+      offerName: selectedOffer.name,
+      price: selectedOffer.price, 
+      quantity: 1, 
+      totalPrice,
       discountCode: appliedDiscount?.code || null,
       discountType: appliedDiscount?.type || null,
       discountValue: appliedDiscount?.value || null,
       appliedDiscount
     };
 
+    // Free reservation with 100% discount
     if (appliedDiscount && isDiscountFree(appliedDiscount)) {
-      if (!isExistingUser) {
-        setValidationMessage(t('subscriberOnlyCode'));
-        setTimeout(() => setValidationMessage(""), 4000);
-        return;
+      setLoading(true);
+      try {
+        // Create user if needed
+        try { await axios.post(`${API}/users`, { name: userName, email: userEmail, whatsapp: userWhatsapp }); }
+        catch (err) { console.error("User creation error:", err); }
+        
+        const res = await axios.post(`${API}/reservations`, reservation);
+        await axios.post(`${API}/discount-codes/${appliedDiscount.id}/use`);
+        setLastReservation(res.data);
+        sendWhatsAppNotification(res.data, true);
+        sendWhatsAppNotification(res.data, false);
+        setShowSuccess(true);
+        resetForm();
+      } catch (err) { console.error(err); }
+      setLoading(false);
+      return;
+    }
+
+    // Check if payment is configured
+    if (!paymentLinks.stripe?.trim() && !paymentLinks.paypal?.trim() && !paymentLinks.twint?.trim()) {
+      setValidationMessage(t('noPaymentConfigured'));
+      setTimeout(() => setValidationMessage(""), 4000);
+      return;
+    }
+
+    setPendingReservation(reservation);
+    
+    // Create user
+    try { await axios.post(`${API}/users`, { name: userName, email: userEmail, whatsapp: userWhatsapp }); }
+    catch (err) { console.error("User creation error:", err); }
+
+    // Open payment link
+    if (paymentLinks.twint?.trim()) window.open(paymentLinks.twint, '_blank');
+    else if (paymentLinks.stripe?.trim()) window.open(paymentLinks.stripe, '_blank');
+    else if (paymentLinks.paypal?.trim()) window.open(paymentLinks.paypal, '_blank');
+
+    setTimeout(() => setShowConfirmPayment(true), 800);
+  };
       }
       setLoading(true);
       try {
