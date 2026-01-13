@@ -365,17 +365,42 @@ const FolderIcon = () => (
   </svg>
 );
 
-// Splash Screen - Pure Black with configurable logo
-const SplashScreen = ({ logoUrl }) => (
-  <div className="splash-screen" style={{ background: '#000000' }}>
-    {logoUrl ? (
-      <img src={logoUrl} alt="Afroboost" className="splash-logo" />
-    ) : (
-      <div className="splash-headset">🎧</div>
-    )}
-    <div className="splash-text">Afroboost</div>
-  </div>
-);
+// Splash Screen - Pure Black with configurable logo and PWA fallback
+const SplashScreen = ({ logoUrl }) => {
+  const [imgError, setImgError] = useState(false);
+  // Use PWA logo as fallback if no logoUrl or image fails to load
+  const fallbackLogo = '/logo512.png';
+  const showLogo = logoUrl && !imgError;
+  const showFallback = !logoUrl || imgError;
+  
+  return (
+    <div className="splash-screen" style={{ background: '#000000' }}>
+      {showLogo && (
+        <img 
+          src={logoUrl} 
+          alt="Afroboost" 
+          className="splash-logo" 
+          onError={() => setImgError(true)}
+        />
+      )}
+      {showFallback && (
+        <img 
+          src={fallbackLogo} 
+          alt="Afroboost" 
+          className="splash-logo" 
+          style={{ maxWidth: '150px', maxHeight: '150px' }}
+          onError={(e) => { 
+            // Ultimate fallback: show emoji if PWA logo also fails
+            e.target.style.display = 'none';
+            e.target.parentNode.querySelector('.splash-headset-fallback').style.display = 'block';
+          }}
+        />
+      )}
+      <div className="splash-headset-fallback" style={{ display: 'none', fontSize: '80px' }}>🎧</div>
+      <div className="splash-text">Afroboost</div>
+    </div>
+  );
+};
 
 // Language Selector - Clean without background
 const LanguageSelector = ({ lang, setLang }) => {
