@@ -1931,6 +1931,7 @@ function App() {
   // PWA Install Prompt State
   const [installPrompt, setInstallPrompt] = useState(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   const t = useCallback((key) => translations[lang][key] || key, [lang]);
 
@@ -1938,6 +1939,10 @@ function App() {
 
   // PWA Install Prompt - Capture beforeinstallprompt event
   useEffect(() => {
+    // Detect iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    setIsIOS(iOS);
+
     const handleBeforeInstallPrompt = (e) => {
       // Prevent Chrome 67+ from automatically showing the prompt
       e.preventDefault();
@@ -1952,9 +1957,18 @@ function App() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    // Check if already installed (for iOS/Safari)
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    // Check if already installed (standalone mode)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.navigator.standalone === true;
+    
+    if (isStandalone) {
       setShowInstallBanner(false);
+    } else if (iOS) {
+      // Show banner for iOS with manual instructions
+      const dismissed = localStorage.getItem('af_pwa_dismissed');
+      if (!dismissed) {
+        setShowInstallBanner(true);
+      }
     }
 
     return () => {
@@ -1964,6 +1978,12 @@ function App() {
 
   // Handle PWA install button click
   const handleInstallClick = async () => {
+    if (isIOS) {
+      // For iOS, show instructions (can't auto-prompt)
+      alert('Pour installer Afroboost sur iOS:\n\n1. Appuyez sur le bouton Partager (📤)\n2. Sélectionnez "Sur l\'écran d\'accueil"\n3. Appuyez sur "Ajouter"');
+      return;
+    }
+    
     if (!installPrompt) return;
     
     // Show the install prompt
