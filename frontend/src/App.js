@@ -1607,8 +1607,7 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
                       📅 Chaque date créera une ligne distincte avec le statut "Programmé"
                     </p>
                   </div>
-                  )}
-                </div>
+                )}
               </div>
               
               <button type="submit" className="btn-primary px-6 py-3 rounded-lg w-full md:w-auto">
