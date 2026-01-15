@@ -4344,6 +4344,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [appliedDiscount, setAppliedDiscount] = useState(null);
 
+  // Navigation et filtrage
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Check for /validate/:code URL on mount
   useEffect(() => {
     const path = window.location.pathname;
