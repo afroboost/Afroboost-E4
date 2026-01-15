@@ -54,6 +54,13 @@ class Offer(BaseModel):
     videoUrl: Optional[str] = ""
     description: Optional[str] = ""
     visible: bool = True
+    # E-commerce fields
+    category: Optional[str] = ""  # Ex: "service", "tshirt", "shoes", "supplement"
+    isProduct: bool = False  # True = physical product, False = service/course
+    variants: Optional[dict] = None  # { sizes: ["S","M","L"], colors: ["Noir","Blanc"], weights: ["0.5kg","1kg"] }
+    tva: float = 0.0  # TVA percentage
+    shippingCost: float = 0.0  # Frais de port
+    stock: int = -1  # -1 = unlimited
 
 class OfferCreate(BaseModel):
     name: str
@@ -62,6 +69,13 @@ class OfferCreate(BaseModel):
     videoUrl: Optional[str] = ""
     description: Optional[str] = ""
     visible: bool = True
+    # E-commerce fields
+    category: Optional[str] = ""
+    isProduct: bool = False
+    variants: Optional[dict] = None
+    tva: float = 0.0
+    shippingCost: float = 0.0
+    stock: int = -1
 
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
