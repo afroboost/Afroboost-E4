@@ -278,6 +278,21 @@ class CoachLogin(BaseModel):
     email: str
     password: str
 
+# --- Lead Model (Widget IA) ---
+class Lead(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = ""
+    firstName: str
+    whatsapp: str
+    email: str
+    createdAt: str = ""
+    source: str = "widget_ia"
+
+class ChatMessage(BaseModel):
+    message: str
+    leadId: str = ""
+    firstName: str = ""
+
 # ==================== ROUTES ====================
 
 @api_router.get("/")
