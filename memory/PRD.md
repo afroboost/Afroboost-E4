@@ -304,10 +304,17 @@ Application de réservation de casques audio pour des cours de fitness Afroboost
 - [x] Gestionnaire de Campagnes opérationnel (Email BCC, WhatsApp nav, Instagram DM)
 - [x] Intégration EmailJS automatisée avec barre de progression
 - [x] Refactoring modulaire P1 (composants + services)
+- [x] **Navigation Client Dynamique (15 Jan 2026)**:
+  - Barre de filtres chips néon (🔥 Tout, 📅 Sessions, 🎁 Offres, 🛍️ Shop)
+  - Barre de recherche textuelle filtrant offres par nom/description
+  - Composant SearchBar.js modulaire avec NavigationBar et LandingSectionSelector
+- [x] **Contrôle Admin Section d'atterrissage (15 Jan 2026)**:
+  - Sélecteur "📍 Section d'atterrissage par défaut" dans Mode Coach > Concept & Visuel
+  - Persistance MongoDB via champ defaultLandingSection dans modèle Concept
+  - Scroll automatique vers la section configurée au chargement de l'app
 
 ### P1 - À faire
 - [ ] Continuer refactoring: Extraire CoachDashboard, CoachLoginModal dans composants séparés
-- [ ] Migration vers vraie persistance MongoDB (actuellement données en mémoire)
 - [ ] Tests automatisés pour les composants extraits
 
 ### P2 - Backlog
@@ -326,4 +333,5 @@ Application de réservation de casques audio pour des cours de fitness Afroboost
 ---
 
 ## Known Limitations
-⚠️ **DONNÉES NON PERSISTANTES**: Le backend utilise actuellement des listes en mémoire. Toutes les données sont perdues au redémarrage du serveur. La migration vers MongoDB est prioritaire pour la production.
+~~⚠️ **DONNÉES NON PERSISTANTES**: Le backend utilise actuellement des listes en mémoire.~~ 
+✅ **Résolu**: Toutes les données sont maintenant persistées dans MongoDB (cours, offres, réservations, configurations).
