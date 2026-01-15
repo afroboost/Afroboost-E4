@@ -7,6 +7,10 @@ import { Html5Qrcode } from "html5-qrcode";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Configuration Admin - Vercel Compatible
+const ADMIN_EMAIL = 'contact.artboost@gmail.com';
+const APP_VERSION = '2.0.0';
+
 // Translations
 const translations = {
   fr: {
