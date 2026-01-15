@@ -2791,6 +2791,102 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
                 />
               </div>
 
+              {/* Liens Externes */}
+              <div className="mt-6 pt-6 border-t border-purple-500/30">
+                <h3 className="text-white text-sm font-semibold mb-4">🔗 Liens Externes (affichés en bas de page)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block mb-1 text-white text-xs opacity-70">Titre du lien 1</label>
+                    <input 
+                      type="text" 
+                      value={concept.externalLink1Title || ''} 
+                      onChange={(e) => setConcept({ ...concept, externalLink1Title: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm" 
+                      placeholder="Ex: Instagram"
+                      data-testid="external-link1-title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-white text-xs opacity-70">URL du lien 1</label>
+                    <input 
+                      type="url" 
+                      value={concept.externalLink1Url || ''} 
+                      onChange={(e) => setConcept({ ...concept, externalLink1Url: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm" 
+                      placeholder="https://..."
+                      data-testid="external-link1-url"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1 text-white text-xs opacity-70">Titre du lien 2</label>
+                    <input 
+                      type="text" 
+                      value={concept.externalLink2Title || ''} 
+                      onChange={(e) => setConcept({ ...concept, externalLink2Title: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm" 
+                      placeholder="Ex: Facebook"
+                      data-testid="external-link2-title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-white text-xs opacity-70">URL du lien 2</label>
+                    <input 
+                      type="url" 
+                      value={concept.externalLink2Url || ''} 
+                      onChange={(e) => setConcept({ ...concept, externalLink2Url: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm" 
+                      placeholder="https://..."
+                      data-testid="external-link2-url"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Modes de paiement acceptés */}
+              <div className="mt-6 pt-6 border-t border-purple-500/30">
+                <h3 className="text-white text-sm font-semibold mb-4">💳 Modes de paiement acceptés</h3>
+                <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Les icônes des paiements cochés s'afficheront dans le pied de page côté client.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={concept.paymentTwint || false}
+                      onChange={(e) => setConcept({ ...concept, paymentTwint: e.target.checked })}
+                      className="w-5 h-5 rounded accent-pink-500"
+                      data-testid="payment-twint"
+                    />
+                    <span className="text-white text-sm">Twint</span>
+                    <span style={{ fontSize: '20px' }}>🔵</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={concept.paymentPaypal || false}
+                      onChange={(e) => setConcept({ ...concept, paymentPaypal: e.target.checked })}
+                      className="w-5 h-5 rounded accent-pink-500"
+                      data-testid="payment-paypal"
+                    />
+                    <span className="text-white text-sm">PayPal</span>
+                    <span style={{ fontSize: '20px' }}>🅿️</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={concept.paymentCreditCard || false}
+                      onChange={(e) => setConcept({ ...concept, paymentCreditCard: e.target.checked })}
+                      className="w-5 h-5 rounded accent-pink-500"
+                      data-testid="payment-creditcard"
+                    />
+                    <span className="text-white text-sm">Carte de Crédit</span>
+                    <span style={{ fontSize: '20px' }}>💳</span>
+                  </label>
+                </div>
+              </div>
+
               <button onClick={saveConcept} className="btn-primary px-6 py-3 rounded-lg mt-6" data-testid="save-concept">{t('save')}</button>
             </div>
           </div>
