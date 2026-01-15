@@ -1,6 +1,7 @@
 // /services/index.js - Export centralisé des services Afroboost
 // Compatible Vercel
 
+// === EMAIL SERVICE (EmailJS) ===
 export {
   getEmailJSConfig,
   saveEmailJSConfig,
@@ -10,3 +11,14 @@ export {
   sendBulkEmails,
   testEmailJSConfig
 } from './emailService';
+
+// === WHATSAPP SERVICE (Twilio) ===
+export {
+  getWhatsAppConfig,
+  saveWhatsAppConfig,
+  isWhatsAppConfigured,
+  formatPhoneE164,
+  sendWhatsAppMessage,
+  sendBulkWhatsApp,
+  testWhatsAppConfig
+} from './whatsappService';
