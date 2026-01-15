@@ -2236,6 +2236,35 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
                 </p>
               </div>
 
+              {/* Lien Avis Google */}
+              <div className="mt-6 pt-6 border-t border-purple-500/30">
+                <label className="block mb-2 text-white text-sm">⭐ Lien des avis Google</label>
+                <input 
+                  type="url" 
+                  value={concept.googleReviewsUrl || ''} 
+                  onChange={(e) => setConcept({ ...concept, googleReviewsUrl: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg neon-input" 
+                  placeholder="https://g.page/r/..."
+                  data-testid="concept-google-reviews-url"
+                />
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  Ce lien s'affichera comme bouton "Voir les avis" côté client, entre les offres et le formulaire.
+                </p>
+                {concept.googleReviewsUrl && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-green-400 text-xs">✓ Lien configuré</span>
+                    <a 
+                      href={concept.googleReviewsUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-xs text-pink-400 hover:text-pink-300 underline"
+                    >
+                      Tester le lien
+                    </a>
+                  </div>
+                )}
+              </div>
+
               <button onClick={saveConcept} className="btn-primary px-6 py-3 rounded-lg mt-6" data-testid="save-concept">{t('save')}</button>
             </div>
           </div>
