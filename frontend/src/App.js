@@ -2670,9 +2670,47 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
               </div>
               <div>
                 <label className="block mb-2 text-white text-sm">{t('mediaUrl')}</label>
-                <input type="url" value={concept.heroImageUrl} onChange={(e) => setConcept({ ...concept, heroImageUrl: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg neon-input" placeholder="https://youtube.com/watch?v=... ou image URL" data-testid="concept-media-url" />
-                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Supporte: YouTube, Vimeo, .mp4, images</p>
+                <div className="relative">
+                  <input type="url" value={concept.heroImageUrl} onChange={(e) => setConcept({ ...concept, heroImageUrl: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg neon-input pr-24" placeholder="https://youtube.com/watch?v=... ou image URL" data-testid="concept-media-url" />
+                  {/* Badge de validation d'URL */}
+                  {concept.heroImageUrl && concept.heroImageUrl.trim() !== '' && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 rounded" style={{
+                      background: (() => {
+                        const url = concept.heroImageUrl.toLowerCase();
+                        const isValid = url.includes('youtube.com') || url.includes('youtu.be') || 
+                                        url.includes('vimeo.com') || 
+                                        url.endsWith('.mp4') || url.endsWith('.webm') ||
+                                        url.endsWith('.jpg') || url.endsWith('.jpeg') || 
+                                        url.endsWith('.png') || url.endsWith('.webp') || url.endsWith('.gif') ||
+                                        url.includes('unsplash.com') || url.includes('pexels.com');
+                        return isValid ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                      })(),
+                      color: (() => {
+                        const url = concept.heroImageUrl.toLowerCase();
+                        const isValid = url.includes('youtube.com') || url.includes('youtu.be') || 
+                                        url.includes('vimeo.com') || 
+                                        url.endsWith('.mp4') || url.endsWith('.webm') ||
+                                        url.endsWith('.jpg') || url.endsWith('.jpeg') || 
+                                        url.endsWith('.png') || url.endsWith('.webp') || url.endsWith('.gif') ||
+                                        url.includes('unsplash.com') || url.includes('pexels.com');
+                        return isValid ? '#22c55e' : '#ef4444';
+                      })()
+                    }}>
+                      {(() => {
+                        const url = concept.heroImageUrl.toLowerCase();
+                        const isValid = url.includes('youtube.com') || url.includes('youtu.be') || 
+                                        url.includes('vimeo.com') || 
+                                        url.endsWith('.mp4') || url.endsWith('.webm') ||
+                                        url.endsWith('.jpg') || url.endsWith('.jpeg') || 
+                                        url.endsWith('.png') || url.endsWith('.webp') || url.endsWith('.gif') ||
+                                        url.includes('unsplash.com') || url.includes('pexels.com');
+                        return isValid ? '✓ Valide' : '✗ Format inconnu';
+                      })()}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Formats acceptés: YouTube, Vimeo, .mp4, .jpg, .png, .webp</p>
               </div>
               {concept.heroImageUrl && (
                 <div className="mt-4">
