@@ -1218,9 +1218,11 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
   const [newCode, setNewCode] = useState({ code: "", type: "", value: "", assignedEmail: "", courses: [], maxUses: "", expiresAt: "" });
   const [newCourse, setNewCourse] = useState({ name: "", weekday: 0, time: "18:30", locationName: "", mapsUrl: "" });
   const [newOffer, setNewOffer] = useState({ 
-    name: "", price: 0, visible: true, thumbnail: "", description: "",
+    name: "", price: 0, visible: true, description: "",
+    images: ["", "", "", "", ""], // 5 champs d'images
     category: "service", isProduct: false, variants: null, tva: 0, shippingCost: 0, stock: -1
   });
+  const [editingOfferId, setEditingOfferId] = useState(null); // Pour mode édition
   const fileInputRef = useRef(null);
   
   // Scanner state
