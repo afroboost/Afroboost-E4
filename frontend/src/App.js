@@ -2063,6 +2063,10 @@ const SuccessOverlay = ({ t, data, onClose }) => {
           <div className="text-sm text-left space-y-1 text-white opacity-80">
             <p><strong>{t('name')}:</strong> {data.userName}</p>
             <p><strong>{t('courses')}:</strong> {data.courseName}</p>
+            {/* Afficher les variantes si présentes */}
+            {data.variantsText && (
+              <p><strong>Options:</strong> {data.variantsText}</p>
+            )}
             <p><strong>{t('total')}:</strong> CHF {data.totalPrice}{data.quantity > 1 ? ` (x${data.quantity})` : ''}</p>
           </div>
           
