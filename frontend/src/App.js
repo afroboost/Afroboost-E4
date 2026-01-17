@@ -3769,26 +3769,101 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
             )}
             
             <form onSubmit={addCode} className="mb-6 p-4 rounded-lg glass">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <input type="text" placeholder={t('codePromo')} value={newCode.code} onChange={e => setNewCode({ ...newCode, code: e.target.value })}
-                  className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-name" />
-                <select value={newCode.type} onChange={e => setNewCode({ ...newCode, type: e.target.value })} className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-type">
-                  <option value="">{t('type')}</option>
-                  <option value="100%">100% (Gratuit)</option>
-                  <option value="%">%</option>
-                  <option value="CHF">CHF</option>
-                </select>
-                <input type="number" placeholder={t('value')} value={newCode.value} onChange={e => setNewCode({ ...newCode, value: e.target.value })}
-                  className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-value" />
-                {/* Beneficiary Dropdown */}
-                <select value={newCode.assignedEmail} onChange={e => setNewCode({ ...newCode, assignedEmail: e.target.value })}
-                  className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-beneficiary">
-                  <option value="">{t('selectBeneficiary')}</option>
-                  {uniqueCustomers.map((c, i) => (
-                    <option key={i} value={c.email}>{c.name} - {c.email}</option>
-                  ))}
-                </select>
+              {/* Toggle Mode Série */}
+              <div className="flex items-center justify-between mb-4">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={isBatchMode} 
+                    onChange={(e) => setIsBatchMode(e.target.checked)}
+                    className="w-5 h-5 rounded accent-purple-500"
+                    data-testid="batch-mode-toggle"
+                  />
+                  <span className="text-white font-medium">{t('batchGeneration')}</span>
+                </label>
+                {isBatchMode && (
+                  <span className="text-xs text-purple-300 opacity-70">{t('batchMax')}</span>
+                )}
               </div>
+              
+              {/* Champs de génération en série (visibles uniquement si mode série activé) */}
+              {isBatchMode && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-3 rounded-lg" style={{ background: 'rgba(139, 92, 246, 0.15)', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+                  <div>
+                    <label className="block text-white text-xs mb-1 opacity-70">{t('codePrefix')}</label>
+                    <input 
+                      type="text" 
+                      placeholder="VIP, PROMO, COACH..." 
+                      value={newCode.prefix} 
+                      onChange={e => setNewCode({ ...newCode, prefix: e.target.value.toUpperCase() })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm uppercase" 
+                      data-testid="batch-prefix"
+                      maxLength={15}
+                    />
+                    <span className="text-xs text-purple-300 opacity-50 mt-1 block">Ex: VIP → VIP-1, VIP-2...</span>
+                  </div>
+                  <div>
+                    <label className="block text-white text-xs mb-1 opacity-70">{t('batchCount')}</label>
+                    <input 
+                      type="number" 
+                      min="1" 
+                      max="20" 
+                      placeholder="1-20" 
+                      value={newCode.batchCount} 
+                      onChange={e => setNewCode({ ...newCode, batchCount: Math.min(20, Math.max(1, parseInt(e.target.value) || 1)) })}
+                      className="w-full px-3 py-2 rounded-lg neon-input text-sm" 
+                      data-testid="batch-count"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Champ code unique (visible uniquement si mode série désactivé) */}
+              {!isBatchMode && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <input type="text" placeholder={t('codePromo')} value={newCode.code} onChange={e => setNewCode({ ...newCode, code: e.target.value })}
+                    className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-name" />
+                  <select value={newCode.type} onChange={e => setNewCode({ ...newCode, type: e.target.value })} className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-type">
+                    <option value="">{t('type')}</option>
+                    <option value="100%">100% (Gratuit)</option>
+                    <option value="%">%</option>
+                    <option value="CHF">CHF</option>
+                  </select>
+                  <input type="number" placeholder={t('value')} value={newCode.value} onChange={e => setNewCode({ ...newCode, value: e.target.value })}
+                    className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-value" />
+                  {/* Beneficiary Dropdown */}
+                  <select value={newCode.assignedEmail} onChange={e => setNewCode({ ...newCode, assignedEmail: e.target.value })}
+                    className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="new-code-beneficiary">
+                    <option value="">{t('selectBeneficiary')}</option>
+                    {uniqueCustomers.map((c, i) => (
+                      <option key={i} value={c.email}>{c.name} - {c.email}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              {/* Paramètres communs (Type, Valeur pour le mode série) */}
+              {isBatchMode && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <select value={newCode.type} onChange={e => setNewCode({ ...newCode, type: e.target.value })} className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="batch-code-type">
+                    <option value="">{t('type')}</option>
+                    <option value="100%">100% (Gratuit)</option>
+                    <option value="%">%</option>
+                    <option value="CHF">CHF</option>
+                  </select>
+                  <input type="number" placeholder={t('value')} value={newCode.value} onChange={e => setNewCode({ ...newCode, value: e.target.value })}
+                    className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="batch-code-value" />
+                  {/* Beneficiary Dropdown */}
+                  <select value={newCode.assignedEmail} onChange={e => setNewCode({ ...newCode, assignedEmail: e.target.value })}
+                    className="px-3 py-2 rounded-lg neon-input text-sm" data-testid="batch-code-beneficiary">
+                    <option value="">{t('selectBeneficiary')}</option>
+                    {uniqueCustomers.map((c, i) => (
+                      <option key={i} value={c.email}>{c.name} - {c.email}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <input type="number" placeholder={t('maxUses')} value={newCode.maxUses} onChange={e => setNewCode({ ...newCode, maxUses: e.target.value })}
                   className="px-3 py-2 rounded-lg neon-input text-sm" />
@@ -3809,7 +3884,24 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
                   </div>
                 </div>
               </div>
-              <button type="submit" className="btn-primary px-6 py-2 rounded-lg text-sm" data-testid="add-code">{t('add')}</button>
+              
+              {/* Bouton d'action */}
+              <button 
+                type="submit" 
+                className="btn-primary px-6 py-2 rounded-lg text-sm flex items-center gap-2" 
+                data-testid={isBatchMode ? "generate-batch" : "add-code"}
+                disabled={batchLoading}
+              >
+                {batchLoading ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Création en cours...
+                  </>
+                ) : isBatchMode ? (
+                  <>{t('generateBatch')} ({newCode.batchCount || 1} codes)</>
+                ) : (
+                  t('add')
+                )}
+              </button>
             </form>
 
             <div className="space-y-2">
