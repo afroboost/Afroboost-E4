@@ -1,140 +1,160 @@
 <analysis>**original_problem_statement:**
-L'utilisateur souhaite ajouter une nouvelle fonctionnalité au Mode Coach pour permettre la génération en série de codes promo. Au lieu de créer les codes un par un, le coach devrait pouvoir en générer un nombre défini (par exemple, 10) en une seule fois, avec les mêmes paramètres, tout en conservant la possibilité de les modifier individuellement par la suite.
+L'utilisateur souhaite une refonte UI ultra-minimaliste pour la page d'accueil. Cette refonte se concentre sur une nouvelle barre de navigation par onglets pour filtrer le contenu.
 
-En plus de cette nouvelle demande, les sessions précédentes se sont concentrées sur la résolution de problèmes et l'amélioration de l'expérience utilisateur, notamment :
-- Correction du lecteur vidéo pour qu'il tourne en boucle et pour empêcher les clics sortants.
-- Amélioration du design responsive du Mode Coach (admin), en particulier pour les onglets Réservations et Offres.
-- Réparation de l'assistant IA qui était bloqué.
-- Implémentation d'une fonction de mémoire visiteur pour pré-remplir les informations de l'utilisateur.
-- Résolution des problèmes de déploiement liés aux health checks de Kubernetes.
-- Correction d'un bug qui créait plusieurs favicons dans le DOM.
+**Exigences spécifiques de la tâche actuelle :**
+1.  **Navigation par Onglets :** Remplacer le système de filtre actuel par 3 icônes de navigation (Tout, Cours, Shop) placées horizontalement sous la barre de recherche.
+2.  **Style des Icônes :** Les icônes doivent être de petite taille, dans des cercles fins et discrets, avec un style similaire à l'icône globe de sélection de la langue. L'icône sélectionnée doit avoir une bordure ou un fond rose ().
+3.  **Logique de Filtrage :** Cliquer sur un onglet doit filtrer le contenu affiché sur la page (par exemple, cliquer sur Shop ne montre que les produits physiques).
+4.  **Corrections de Style :**
+    *   Le texte de la section shop (Nos produits physiques...) doit être en blanc pur et police fine.
+    *   La barre de défilement (scrollbar) de la liste des horaires doit être rose () et très fine (4px).
+    *   Ajouter un  de 30px au conteneur des offres pour que l'effet de glow (lueur) ne soit pas coupé en haut.
+
+Cette demande fait suite à une série d'implémentations et de corrections de bugs, notamment le découplage de la logique d'affichage des produits et des cours, la mise en place d'un système d'archivage, l'amélioration de la recherche, et un refactoring majeur du code.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Génération de Codes Promo en Série:** Le coach doit pouvoir spécifier un nombre de codes à créer et les générer en une seule action avec des paramètres identiques.
-2.  **Système de Réservation Principal:** Les utilisateurs doivent pouvoir sélectionner un cours, une date, une offre et réserver.
-3.  **Gestionnaire de Campagnes Automatisé:** Le coach doit pouvoir gérer des campagnes marketing.
-4.  **Agent IA Flottant avec Capture de Leads:** Une icône flottante ouvre un formulaire pour capturer des prospects avant de démarrer une conversation avec une IA.
-5.  **Mode Coach Avancé:** Un panneau d'administration pour gérer l'ensemble de l'application (cours, offres, campagnes, apparence, etc.).
-6.  **Architecture Persistante & Scalable:** L'application utilise MongoDB pour la persistance des données.
+(Basé sur le  et l'historique des demandes)
+1.  **Génération de Codes Promo en Série :** Le coach peut générer plusieurs codes promo en une seule fois. (Terminé)
+2.  **Système de Réservation Principal :** Les utilisateurs peuvent réserver des cours ou acheter des produits. (Existant)
+3.  **Agent IA Flottant :** Un widget de chat IA pour l'assistance client et la capture de leads. (Existant)
+4.  **Mode Coach Avancé :** Panneau d'administration complet pour gérer les cours, offres, produits, campagnes, design, et utilisateurs. (Existant et amélioré)
+5.  **Notifications Coach :** Le coach reçoit des alertes par email/WhatsApp pour chaque nouvelle réservation. (Terminé)
+6.  **Affiche Événement :** Un popup marketing (image/vidéo) gérable par le coach s'affiche à l'arrivée des visiteurs. (Terminé)
+7.  **Recherche et Filtrage Améliorés :** Inclut la recherche floue (fuzzy search) et des filtres de visibilité indépendants pour les cours et les produits. (Terminé)
+8.  **Architecture Persistante & Scalable :** L'application utilise FastAPI et MongoDB. Le code frontend est en cours de refactoring pour une meilleure maintenabilité. (En cours)
 
 **User's preferred language**: Français
 
 **what currently exists?**
-Une application full-stack avec un frontend React monolithique () et un backend FastAPI. La persistance des données est gérée par MongoDB. Les fonctionnalités clés comme la réservation, le mode coach, les campagnes marketing et l'agent IA sont en place et fonctionnelles. Les sessions récentes ont permis de nombreuses améliorations UX/UI (carrousel d'offres, partage de ticket par image, design responsive de l'admin) et des corrections techniques (lecteur vidéo, assistant IA, déploiement, bug du favicon).
+Une application full-stack fonctionnelle avec un frontend React et un backend FastAPI/MongoDB. L'agent était en train d'implémenter une refonte majeure de l'interface utilisateur de la page d'accueil, demandée par l'utilisateur, pour la rendre plus minimaliste. Le composant  a été remplacé par un nouveau composant  pour gérer la navigation par onglets, mais l'intégration et le stylisme ne sont pas terminés.
 
 **Last working item**:
--   **Last item agent was working:** L'agent venait de recevoir la nouvelle demande de l'utilisateur pour implémenter la génération de codes promo en série. Il n'a pas encore commencé le travail.
--   **Status:** NOT STARTED
+-   **Last item agent was working:** Implémentation d'une UI ultra-minimaliste avec une nouvelle navigation par onglets (Tout, Cours, Shop). L'agent a remplacé le contenu de  par un nouveau composant  et s'apprêtait à modifier  pour appliquer les nouveaux styles.
+-   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** frontend testing agent (pour valider le nouveau formulaire de génération en série, la création des codes et leur affichage correct dans la liste).
+-   **Which testing method agent to use?** frontend testing agent. L'agent devra vérifier le bon fonctionnement des nouveaux onglets de navigation, la logique de filtrage associée, et valider tous les changements de style demandés (taille des icônes, couleur de la scrollbar, espacement et style du texte). Une capture d'écran sera également nécessaire pour la validation visuelle.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Fragilité du Scanner QR (Priorité: P2)**
-    -   **Description:** L'accès à la caméra a été un problème récurrent. Bien que résolu, il nécessite une surveillance lors des modifications à proximité.
-    -   **Status:** RESOLVED (Monitoring required)
-    -   **Is recurring issue?** Y
+-   **Issue 1: Finaliser l'implémentation de l'UI minimaliste (Priorité: P0)**
+    -   **Description:** Intégrer la nouvelle barre de navigation par onglets, appliquer les styles minimalistes, et corriger les derniers détails visuels (texte, scrollbar, espacement).
+    -   **Attempted fixes:** Un nouveau composant  a été créé dans .
+    -   **Next debug checklist:**
+        1.  Modifier  pour intégrer le nouveau  et ajouter un état () pour gérer le filtre actif (, , ).
+        2.  Mettre à jour la logique de rendu JSX dans  pour afficher/masquer les sections Cours et Shop en fonction du filtre actif.
+        3.  Modifier  pour styliser la nouvelle barre de navigation, les icônes (taille, couleur, état actif), la scrollbar rose, et le texte de la section shop.
+        4.  Ajouter  au conteneur des offres pour corriger le problème de glow coupé.
+    -   **Why fix this issue and what will be achieved with the fix?** Répondre à la demande explicite de l'utilisateur pour une interface plus épurée et élégante.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N (La partie glow est récurrente).
     -   **Should Test frontend/backend/both after fix?** frontend
+    -   **Blocked on other issue:** Non.
 
 **In progress Task List**:
--   **Task 1: Génération de Codes Promo en Série (Priorité: P0)**
-    -   **Where to resume:** Le travail doit commencer dans . Il faudra analyser la section Codes promo du  pour y ajouter une nouvelle interface (ex: un champ pour le nombre de codes à générer). Le backend devra être appelé en boucle pour créer chaque code.
-    -   **What will be achieved with this?** Permettre au coach de créer rapidement un grand nombre de codes promo, optimisant ainsi la gestion des campagnes.
-    -   **Status:** NOT STARTED
-    -   **Should Test frontend/backend/both after fix?** both
+-   **Task 1: Refonte de la navigation et de l'UI (Priorité: P0)**
+    -   **Where to resume:** Le fichier  a été écrasé. L'agent doit maintenant modifier  pour ajouter les styles des nouveaux onglets, de la scrollbar rose et du texte de la section shop. Ensuite, il faudra modifier  pour intégrer la logique de filtrage.
+    -   **What will be achieved with this?** L'application aura une navigation par onglets claire et une esthétique plus minimaliste, conformément aux exigences de l'utilisateur.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** frontend
     -   **Blocked on something:** Non.
 
 **Upcoming and Future Tasks**
--   **P0: Finaliser le Refactoring de :** C'est la dette technique la plus critique. Le fichier de plus de 5600 lignes doit être découpé en composants et hooks réutilisables pour assurer la maintenabilité.
--   **P1: Optimisation des requêtes Backend:** Appliquer les recommandations du rapport de déploiement pour optimiser 4 requêtes MongoDB dans  (pagination, projection).
--   **P1: Créer des pages dédiées:** Utiliser React Router pour créer des pages distinctes comme  et .
--   **P2: Dashboard Analytics pour le Coach:** Créer une vue pour afficher des statistiques sur les réservations et les revenus.
+-   **P0: Finaliser le Refactoring de :** Bien que  ait été extrait,  reste un fichier très volumineux (~3000 lignes). L'extraction de composants supplémentaires (, , ) reste une priorité technique pour améliorer la maintenabilité.
+-   **P1: Optimisation des requêtes Backend:** Un rapport de déploiement précédent a signalé 4 requêtes MongoDB dans  à optimiser (pagination, projection).
+-   **P1: Créer des pages dédiées:** Utiliser  pour scinder l'application en plusieurs pages (ex: , ), ce qui réduirait encore la complexité de .
+-   **P2: Dashboard Analytics pour le Coach:** Créer une vue de statistiques sur les réservations et les revenus.
+-   **P2: Sauvegarde/Restauration de la planification:** Une suggestion de l'agent pour permettre au coach de sauvegarder et restaurer un planning de cours hebdomadaire.
 
 **Completed work in this session**
--   **Amélioration du Partage WhatsApp:** Le bouton de partage génère maintenant une image du ticket de confirmation (avec QR code) grâce à .
--   **Design Responsive du Mode Coach:** Les onglets Réservations et Offres sont maintenant lisibles sur mobile, utilisant un design à base de cartes.
--   **Correction du Lecteur Vidéo:** La vidéo d'accueil tourne maintenant en boucle et une couche transparente empêche les clics sortants vers YouTube. L'autoplay avec son a été géré en respectant les politiques des navigateurs (démarrage en mute avec un bouton pour activer le son).
--   **Réparation de l'Assistant IA:** La connexion à l'API a été réparée en mettant à jour le code backend pour correspondre à la nouvelle signature de la librairie .
--   **Mémoire Visiteur:** La fonctionnalité qui pré-remplit les informations de l'utilisateur (nom, email, WhatsApp) via  a été vérifiée et confirmée comme fonctionnelle.
--   **Correction pour le Déploiement:** Un endpoint  (et un fichier statique ) a été ajouté pour satisfaire les health checks de Kubernetes qui échouaient.
--   **Correction du Favicon:** Le code a été modifié pour supprimer tous les anciens favicons du DOM avant d'en ajouter un nouveau, évitant les doublons.
--   **Fonctionnalités Admin Ajoutées:** Ajout d'une icône poubelle pour supprimer des réservations et d'un formulaire pour ajouter manuellement un contact aux codes promo.
+-   **Découplage Produits/Cours :** La logique d'affichage a été entièrement revue pour que les produits physiques soient rendus indépendamment de la visibilité ou de la sélection des cours.
+-   **Système d'Archivage :** Remplacement de la suppression définitive des cours par un système d'archivage/restauration dans le Mode Coach.
+-   **Fonction de Duplication :** Ajout d'un bouton pour dupliquer un cours existant, facilitant la création de créneaux similaires.
+-   **Recherche et UI Améliorées :**
+    *   Mise en place d'une recherche floue (fuzzy search) et ajout d'un champ mots-clés pour les offres.
+    *   Ajout d'une scrollbar et d'un bouton de suppression pour la liste des cours dans le Mode Coach.
+-   **Correction de Bug Critique :** L'erreur récurrente  a été résolue en définissant la constante directement dans .
+-   **Notifications pour le Coach :** Implémentation des notifications automatiques par email et WhatsApp lors de nouvelles réservations.
+-   **Fonctionnalité Affiche Événement :** Création d'un popup marketing (image/vidéo) configurable par le coach.
+-   **Refactoring de  :** Extraction du  (~3300 lignes) dans son propre composant.
+-   **Génération de Codes Promo en Série :** Fonctionnalité complète avec préfixe et nombre de codes.
+-   **Export CSV :** Ajout d'un bouton pour exporter les codes promo en CSV.
 
 **Earlier issues found/mentioned but not fixed**
 Aucun.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Échec de l'accès à la caméra du scanner QR.
--   **Recurrence count:** Élevé.
--   **Status:** RESOLVED (mais à surveiller attentivement).
+-   **Problème de glow coupé :** L'effet de lueur sur les cartes d'offres sélectionnées est coupé en haut. L'agent a tenté de le corriger, mais l'utilisateur a de nouveau signalé le problème avec une instruction plus précise (), indiquant que les tentatives précédentes étaient insuffisantes.
 
 **Code Architecture**
-
+archivedkeywordseventPostercoachNotificationNavigationBar
 
 **Key Technical Concepts**
--   **Frontend:** React, /,  (nouveau), .
--   **Backend:** FastAPI (Python), MongoDB avec .
--   **Deployment:** Compréhension et correction des health checks de Kubernetes.
+-   **Frontend:** React (, ), CSS pour le stylisme (y compris les pseudo-éléments de scrollbar et les keyframes pour les animations).
+-   **Backend:** FastAPI, Pydantic (modèles de données mis à jour).
+-   **State Management:** Utilisation d'états locaux () pour gérer les filtres UI, les données de formulaire et la visibilité des composants.
 
 **key DB schema**
--   Aucune modification de schéma dans cette session.
+-   ** collection:** Ajout de .
+-   ** collection:** Ajout de .
+-   ** collection (document ):** Ajout de , .
+-   ** collection (document ):** Ajout de , .
 
 **All files of reference**
--   : Fichier principal, massivement modifié pour toutes les nouvelles fonctionnalités et corrections.
--   : Modifié pour l'assistant IA et les endpoints de health check/manifest.
--   : Modifié pour le design responsive du mode coach.
--   : Nouveau fichier créé pour le déploiement.
--   : Modifié pour lier dynamiquement le manifest PWA.
+-   : Fichier central. A subi des changements majeurs pour la séparation de la logique cours/produits et doit être modifié pour intégrer le nouvel état de filtrage.
+-   : Fichier contenant la logique du panneau d'administration.
+-   : Contient le code du nouveau composant de navigation par onglets.
+-   : Doit être modifié pour refléter les nouvelles exigences de style (onglets, scrollbar, etc.).
+-   : Contient les modèles de données et les endpoints API mis à jour.
 
 **Areas that need refactoring**:
--   **CRITICAL:** Le fichier  continue de grossir (>5600 lignes) et son refactoring est la priorité technique absolue pour éviter que le projet ne devienne impossible à maintenir.
--   **MODERATE:** Les requêtes backend dans  nécessitent une optimisation (pagination/projection).
+-   **CRITIQUE : **. Malgré l'extraction de , ce fichier de ~3000 lignes reste le principal point de dette technique. Son découpage en composants plus petits et l'introduction de  sont les prochaines étapes logiques.
 
 **key api endpoints**
--    (GET): Endpoint de santé du backend.
--    (GET): Endpoint qui sert un  PWA dynamique.
--    (DELETE): Endpoint maintenant utilisé pour supprimer des réservations.
--    (POST): Endpoint de l'assistant IA, maintenant réparé.
+-   : (NOUVEAU) Archive ou restaure un cours.
+-   : La logique de l'interface utilisateur a été modifiée pour appeler l'archivage plutôt que cette suppression définitive.
 
 **Critical Info for New Agent**
--   **Langue de communication : Français.**
--   **Tâche Immédiate :** La seule tâche à accomplir est la mise en œuvre de la génération de codes promo en série.
--   **Dette Technique:** Après avoir terminé la tâche, la priorité suivante doit être de commencer le refactoring de .
--   **Règles de sécurité strictes:** Ne pas toucher au Splash Screen, à la logique de paiement Stripe, ni modifier manuellement .
+-   **Langue de communication : Français.** Toute interaction avec l'utilisateur doit se faire en français.
+-   **Tâche en cours :** L'agent est au milieu d'une refonte de l'interface utilisateur.  a été remplacé. Les prochaines étapes sont la modification de  et l'intégration de la logique de filtrage dans .
+-   **Règles de sécurité :** L'utilisateur a insisté sur le fait de ne PAS toucher au Splash Screen, à la logique Stripe, et de maintenir le  dynamique.
+-   **Problème récurrent :** Le glow de l'offre qui est coupé est un bug visuel persistant. La nouvelle instruction de l'utilisateur () doit être suivie attentivement.
 
 **documents and test reports created in this job**
 -    (mis à jour)
 -   
+-   
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Utilisateur:** Demande de permettre la génération de codes promo en série.
-2.  **Agent:** Accusé de réception de la tâche précédente.
-3.  **Utilisateur:** Demande de corriger un problème de favicons multiples.
-4.  **Agent:** A résumé la correction du favicon.
-5.  **Utilisateur:** A demandé de lancer un Health Check de déploiement.
-6.  **Agent:** A résumé le rapport de déploiement et la correction de l'endpoint .
-7.  **Utilisateur:** A demandé de corriger la boucle et le clic sur la vidéo d'accueil.
-8.  **Agent:** A résumé la correction du lecteur vidéo.
-9.  **Utilisateur:** A demandé d'améliorer l'interface du Mode Coach.
-10. **Agent:** A résumé l'implémentation des améliorations du mode coach (responsive, ajout/suppression).
+1.  **Utilisateur (dernière demande) :** Demande une UI ultra-minimaliste avec navigation par onglets (petites icônes), et plusieurs corrections de style (texte, scrollbar, espacement du glow).
+2.  **Utilisateur :** Demande de découpler complètement le rendu des produits et des cours, et de remplacer la suppression des cours par un système d'archivage.
+3.  **Utilisateur :** Demande de corriger le scroll des horaires côté client, de corriger le bug de visibilité des produits, et accepte la suggestion de dupliquer les cours.
+4.  **Utilisateur :** Demande une recherche floue (fuzzy search), la correction du bug de visibilité des produits, l'amélioration de l'UI des horaires (scroll/suppression) et la correction du bug .
+5.  **Utilisateur :** Signale que le bug  bloque toujours le Mode Coach et demande la correction du glow coupé, tout en rappelant les fonctionnalités Affiche Événement et Notifications.
+6.  **Agent :** Termine les fonctionnalités Affiche Événement et Notifications Coach et propose de continuer le refactoring.
+7.  **Utilisateur :** Demande la mise en place de notifications automatiques pour le coach lors d'une nouvelle réservation.
+8.  **Agent :** Termine le refactoring du  et la fonctionnalité d'export CSV, puis propose une nouvelle amélioration.
+9.  **Utilisateur :** Valide la génération en série des codes promo, approuve l'idée d'export CSV, et demande de commencer le refactoring de  en extrayant .
+10. **Agent :** Termine la fonctionnalité de génération de codes promo en série et propose une fonction d'export CSV.
 
 **Project Health Check:**
--   **Broken:** Le monolithe  est une dette technique majeure qui rend la maintenance complexe et risquée.
+-   **Broken:** Non, mais la navigation est dans un état de transition (le code a été ajouté mais n'est pas encore stylisé ni fonctionnel).
 -   **Mocked:** Aucune.
 
 **3rd Party Integrations**
--   **EmailJS ()**
--   **Twilio API (via )**
--   **OpenAI ():** Réparé et fonctionnel.
--   **qrcode.react**
--   **html5-qrcode**
--   **html2canvas:** (NOUVEAU) Installé pour la génération d'images de ticket.
+-   EmailJS ()
+-   Twilio (utilisé via l'API  pour WhatsApp)
+-   OpenAI ()
+-   
+-   
+-   
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (pour la fonctionnalité du carrousel).
+-   **Testing agent used after significant changes:** YES (utilisé à plusieurs reprises pour valider les fonctionnalités majeures et le refactoring).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** []
--   **Known regressions:** Le scanner QR est une fonctionnalité fragile.
+-   **Known regressions:** Le bug de visibilité des produits et l'erreur  étaient des régressions qui ont été corrigées. Le problème du glow coupé est un bug visuel persistant.
 
 **Credentials to test flow:**
 -   **Accès Coach:** 3 clics rapides sur le texte de copyright en pied de page.
@@ -142,4 +162,4 @@ Aucun.
     -   Mot de passe: 
 
 **What agent forgot to execute**
-L'agent a été très réactif aux demandes de l'utilisateur, mais n'a pas encore abordé la tâche de fond la plus critique : le refactoring du fichier monolithique . C'est une dette technique qui continue de s'aggraver.</analysis>
+L'agent n'a rien oublié des tâches demandées. Cependant, certains problèmes (comme le glow coupé) ont nécessité plusieurs interventions pour être résolus selon les attentes de l'utilisateur, indiquant une possible imprécision dans les premières tentatives de correction.</analysis>
