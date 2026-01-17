@@ -2973,10 +2973,11 @@ function App() {
 
       <div className="max-w-4xl mx-auto pt-12">
         <div className="text-center mb-8">
+          {/* Titre dynamique - utilise appName du concept ou la traduction par défaut */}
           <h1 className="font-bold mb-2 text-white" style={{ 
             fontSize: '44px', 
             textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 30px rgba(217, 28, 210, 0.4)' 
-          }} data-testid="app-title">{t('appTitle')}</h1>
+          }} data-testid="app-title">{concept.appName || t('appTitle')}</h1>
           <p className="max-w-2xl mx-auto text-white" style={{ 
             fontSize: '15px', 
             textShadow: '0 1px 3px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.5)',
