@@ -5244,7 +5244,7 @@ function App() {
 
         {selectedOffer && (
           <form onSubmit={handleSubmit}>
-            <div className="form-section rounded-xl p-6 mb-6">
+            <div id="user-info-section" className="form-section rounded-xl p-6 mb-6" data-testid="user-info-section">
               <h2 className="font-semibold mb-4 text-white" style={{ fontSize: '18px' }}>{t('yourInfo')}</h2>
               <div className="space-y-4">
                 {/* Private input fields with auto-fill support */}
