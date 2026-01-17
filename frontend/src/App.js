@@ -2317,6 +2317,29 @@ function App() {
     }
   }, [coachMode, fetchData]);
 
+  // Afficher le popup Affiche Événement si activé
+  useEffect(() => {
+    // Ne pas afficher si on est en mode Coach ou pendant le splash
+    if (coachMode || showSplash || showCoachLogin) return;
+    
+    // Vérifier si le popup a déjà été fermé dans cette session
+    const posterDismissed = sessionStorage.getItem('eventPosterDismissed');
+    
+    if (concept.eventPosterEnabled && concept.eventPosterMediaUrl && !posterDismissed) {
+      // Petit délai pour laisser le temps au site de se charger
+      const timer = setTimeout(() => {
+        setShowEventPoster(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [concept.eventPosterEnabled, concept.eventPosterMediaUrl, coachMode, showSplash, showCoachLogin]);
+
+  // Fonction pour fermer le popup et mémoriser
+  const closeEventPoster = () => {
+    setShowEventPoster(false);
+    sessionStorage.setItem('eventPosterDismissed', 'true');
+  };
+
   // =====================================================
   // FAVICON & PWA: Fonction centralisée pour mettre à jour le favicon
   // Supprime TOUS les favicons existants avant d'en injecter un seul
