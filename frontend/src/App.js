@@ -555,25 +555,26 @@ const MediaDisplay = ({ url, className }) => {
     height: '100%'
   };
 
-  // Petite icône discrète en bas à droite
+  // Petite icône discrète en bas à droite - z-index élevé pour passer par-dessus YouTube
   const smallMuteStyle = {
     position: 'absolute',
-    bottom: '8px',
-    right: '8px',
-    zIndex: 20,
-    width: '28px',
-    height: '28px',
+    bottom: '12px',
+    right: '12px',
+    zIndex: 100,
+    width: '32px',
+    height: '32px',
     borderRadius: '50%',
-    background: 'rgba(0, 0, 0, 0.5)',
-    border: 'none',
+    background: 'rgba(0, 0, 0, 0.7)',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     color: '#fff',
-    fontSize: '12px',
-    opacity: 0.6,
-    transition: 'opacity 0.2s'
+    fontSize: '14px',
+    opacity: 0.8,
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
   };
 
   // Click blocker
