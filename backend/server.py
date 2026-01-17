@@ -61,6 +61,7 @@ class Course(BaseModel):
     locationName: str
     mapsUrl: Optional[str] = ""
     visible: bool = True
+    archived: bool = False  # Archive au lieu de supprimer
 
 class CourseCreate(BaseModel):
     name: str
