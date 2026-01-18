@@ -698,6 +698,70 @@ async def use_discount_code(code_id: str):
     await db.discount_codes.update_one({"id": code_id}, {"$inc": {"used": 1}})
     return {"success": True}
 
+# ==================== SANITIZE DATA (Nettoyage des données fantômes) ====================
+
+@api_router.post("/sanitize-data")
+async def sanitize_data():
+    """
+    Nettoie automatiquement les données fantômes:
+    - Retire des codes promo les IDs d'offres/cours qui n'existent plus
+    - Retire des codes promo les emails de bénéficiaires qui n'existent plus
+    """
+    # 1. Récupérer tous les IDs valides
+    valid_offer_ids = set()
+    valid_course_ids = set()
+    valid_user_emails = set()
+    
+    offers = await db.offers.find({}, {"id": 1, "_id": 0}).to_list(1000)
+    for o in offers:
+        if o.get("id"):
+            valid_offer_ids.add(o["id"])
+    
+    courses = await db.courses.find({}, {"id": 1, "_id": 0}).to_list(1000)
+    for c in courses:
+        if c.get("id"):
+            valid_course_ids.add(c["id"])
+    
+    users = await db.users.find({}, {"email": 1, "_id": 0}).to_list(1000)
+    for u in users:
+        if u.get("email"):
+            valid_user_emails.add(u["email"])
+    
+    all_valid_article_ids = valid_offer_ids | valid_course_ids
+    
+    # 2. Nettoyer les codes promo
+    discount_codes = await db.discount_codes.find({}, {"_id": 0}).to_list(1000)
+    cleaned_count = 0
+    
+    for code in discount_codes:
+        updates = {}
+        
+        # Nettoyer les articles (courses) fantômes
+        if code.get("courses"):
+            valid_courses = [c for c in code["courses"] if c in all_valid_article_ids]
+            if len(valid_courses) != len(code["courses"]):
+                updates["courses"] = valid_courses
+        
+        # Nettoyer les bénéficiaires fantômes
+        if code.get("assignedEmail") and code["assignedEmail"] not in valid_user_emails:
+            updates["assignedEmail"] = None
+        
+        # Appliquer les mises à jour
+        if updates:
+            await db.discount_codes.update_one({"id": code["id"]}, {"$set": updates})
+            cleaned_count += 1
+    
+    return {
+        "success": True,
+        "message": f"Nettoyage terminé: {cleaned_count} codes promo nettoyés",
+        "stats": {
+            "valid_offers": len(valid_offer_ids),
+            "valid_courses": len(valid_course_ids),
+            "valid_users": len(valid_user_emails),
+            "codes_cleaned": cleaned_count
+        }
+    }
+
 # --- Campaigns (Marketing Module) ---
 @api_router.get("/campaigns")
 async def get_campaigns():
