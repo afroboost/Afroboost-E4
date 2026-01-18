@@ -480,21 +480,38 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
   };
   
   // Supprimer un contact (Hard Delete avec nettoyage des références)
+  // Supprimer un contact - SUPPRESSION DÉFINITIVE + NETTOYAGE CODES PROMO
   const deleteContact = async (userId) => {
-    if (!window.confirm("⚠️ Supprimer définitivement ce contact ?\n\nCette action:\n• Supprime le contact de la base\n• Retire son email des codes promo associés")) return;
+    if (!window.confirm("⚠️ SUPPRESSION DÉFINITIVE\n\nCe contact sera supprimé de la base de données.\nSon email sera retiré de tous les codes promo.\n\nConfirmer la suppression ?")) return;
     try {
+      // Récupérer l'email AVANT suppression du state
+      const userToDelete = users.find(u => u.id === userId);
+      const userEmail = userToDelete?.email;
+      
+      // 1. Supprimer en base de données
       await axios.delete(`${API}/users/${userId}`);
-      setUsers(users.filter(u => u.id !== userId));
-      // Mettre à jour les codes promo localement (retirer l'email du contact)
-      const deletedUser = users.find(u => u.id === userId);
-      if (deletedUser?.email) {
-        setDiscountCodes(codes => codes.map(c => 
-          c.assignedEmail === deletedUser.email ? { ...c, assignedEmail: null } : c
+      
+      // 2. Mettre à jour le state local
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      
+      // 3. Nettoyer les codes promo localement
+      if (userEmail) {
+        setDiscountCodes(prev => prev.map(c => 
+          c.assignedEmail === userEmail ? { ...c, assignedEmail: null } : c
         ));
       }
+      
+      // 4. Appeler sanitizeData pour s'assurer que la base est propre
+      try {
+        await axios.post(`${API}/sanitize-data`);
+      } catch (sanitizeErr) {
+        console.warn("Sanitize warning:", sanitizeErr);
+      }
+      
+      console.log(`✅ Contact ${userId} supprimé définitivement`);
     } catch (err) {
       console.error("Erreur suppression contact:", err);
-      alert("Erreur lors de la suppression");
+      alert("❌ Erreur lors de la suppression");
     }
   };
 
