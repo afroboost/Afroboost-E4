@@ -2640,9 +2640,9 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Pour les produits physiques, pas besoin de cours/date
+    // Pour les produits physiques, pas besoin de cours/dates
     const isPhysicalProduct = selectedOffer?.isProduct || selectedOffer?.isPhysicalProduct;
-    if (!isPhysicalProduct && (!selectedCourse || !selectedDate)) return;
+    if (!isPhysicalProduct && (!selectedCourse || selectedDates.length === 0)) return;
     if (!selectedOffer || !hasAcceptedTerms) return;
 
     // Direct validation - private fields only
@@ -2672,12 +2672,17 @@ function App() {
       }
     }
 
-    // Calcul de la date pour les services (cours)
+    // Calcul de la date pour les services (cours) - utilise la première date sélectionnée
     let dt = new Date();
+    const selectedDate = selectedDates[0]; // Première date pour la réservation principale
     if (selectedCourse && selectedDate) {
       const [h, m] = selectedCourse.time.split(':');
       dt = new Date(selectedDate);
       dt.setHours(parseInt(h), parseInt(m), 0, 0);
+    }
+    
+    // Nombre de dates sélectionnées (pour le calcul du prix)
+    const dateCount = selectedDates.length || 1;;
     }
 
     const totalPrice = parseFloat(calculateTotal());
