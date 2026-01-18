@@ -277,26 +277,34 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
     setNewCode({ code: "", type: "", value: "", assignedEmail: "", courses: [], maxUses: "", expiresAt: "", batchCount: 1, prefix: "" });
   };
 
-  // Génération en série de codes promo
+  // Génération en série de codes promo - Crée réellement N entrées distinctes en base
   const addBatchCodes = async (e) => {
     e.preventDefault();
     if (!newCode.type || !newCode.value) return;
     
-    const count = Math.min(Math.max(1, parseInt(newCode.batchCount) || 1), 20); // Entre 1 et 20
+    const count = Math.min(Math.max(1, parseInt(newCode.batchCount) || 1), 50); // Entre 1 et 50
     const prefix = newCode.prefix?.trim().toUpperCase() || "CODE";
     
     setBatchLoading(true);
     const createdCodes = [];
     
     try {
-      for (let i = 1; i <= count; i++) {
-        const codeValue = `${prefix}-${i}`;
+      // Si plusieurs bénéficiaires sélectionnés, attribuer un code à chacun
+      const beneficiaries = selectedBeneficiaries.length > 0 ? selectedBeneficiaries : [null];
+      let codeIndex = 1;
+      
+      for (let i = 0; i < count; i++) {
+        // Attribuer les bénéficiaires de manière circulaire si moins de bénéficiaires que de codes
+        const beneficiaryEmail = beneficiaries[i % beneficiaries.length];
+        const codeValue = `${prefix}-${String(codeIndex).padStart(2, '0')}`;
+        codeIndex++;
+        
         const response = await axios.post(`${API}/discount-codes`, {
           code: codeValue,
           type: newCode.type, 
           value: parseFloat(newCode.value),
-          assignedEmail: newCode.assignedEmail || null,
-          courses: newCode.courses, 
+          assignedEmail: beneficiaryEmail,
+          courses: newCode.courses, // Cours ET produits autorisés
           maxUses: newCode.maxUses ? parseInt(newCode.maxUses) : null,
           expiresAt: newCode.expiresAt || null
         });
@@ -304,9 +312,10 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
       }
       
       setDiscountCodes(prev => [...prev, ...createdCodes]);
-      setNewCode({ code: "", type: "", value: "", assignedEmail: "", courses: [], maxUses: "", expiresAt: "", batchCount: 1, prefix: "" });
+      setNewCode({ code: "", type: "", value: "", assignedEmails: [], courses: [], maxUses: "", expiresAt: "", batchCount: 1, prefix: "" });
+      setSelectedBeneficiaries([]);
       setIsBatchMode(false);
-      alert(`✅ ${count} ${t('batchSuccess')}`);
+      alert(`✅ ${count} codes créés avec succès !`);
     } catch (error) {
       console.error("Erreur génération en série:", error);
       // Ajouter les codes déjà créés même si erreur partielle
@@ -319,6 +328,23 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
     } finally {
       setBatchLoading(false);
     }
+  };
+  
+  // Toggle sélection d'un bénéficiaire (multi-select)
+  const toggleBeneficiarySelection = (email) => {
+    setSelectedBeneficiaries(prev => 
+      prev.includes(email) 
+        ? prev.filter(e => e !== email)
+        : [...prev, email]
+    );
+  };
+  
+  // Supprimer un article (cours/produit) de la liste des autorisés
+  const removeAllowedArticle = (articleId) => {
+    setNewCode(prev => ({
+      ...prev,
+      courses: prev.courses.filter(id => id !== articleId)
+    }));
   };
 
   const toggleCode = async (code) => {
