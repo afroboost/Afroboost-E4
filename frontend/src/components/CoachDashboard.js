@@ -150,6 +150,7 @@ const CoachDashboard = ({ t, lang, onBack, onLogout }) => {
   const [isBatchMode, setIsBatchMode] = useState(false);
   const [batchLoading, setBatchLoading] = useState(false);
   const [selectedBeneficiaries, setSelectedBeneficiaries] = useState([]); // Multi-select pour bénéficiaires
+  const [editingCode, setEditingCode] = useState(null); // Pour l'édition individuelle des codes
   const [newCourse, setNewCourse] = useState({ name: "", weekday: 0, time: "18:30", locationName: "", mapsUrl: "" });
   const [newOffer, setNewOffer] = useState({ 
     name: "", price: 0, visible: true, description: "", keywords: "",
